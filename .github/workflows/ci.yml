@@ -12,6 +12,7 @@ jobs:
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
+    - uses: Swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2.7.7
     - run: npm ci
     - run: npm run lint
     - run: npm run build
