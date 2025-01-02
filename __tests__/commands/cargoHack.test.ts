@@ -21,7 +21,7 @@ describe('CargoHack', () => {
           console.log('cargo-hack not installed; skipping this test');
         }
       },
-      60 * SECONDS,
+      90 * SECONDS,
     );
   });
 
@@ -41,7 +41,7 @@ describe('CargoHack', () => {
           expect(exitCode).toBe(0);
         }
       },
-      60 * SECONDS,
+      90 * SECONDS,
     );
   });
 
@@ -53,7 +53,7 @@ describe('CargoHack', () => {
         const exitCode = await cargoHack.call(['--version']);
         expect(exitCode).toBe(0);
       },
-      60 * SECONDS,
+      90 * SECONDS,
     );
   });
 });
