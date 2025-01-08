@@ -1,6 +1,7 @@
 import * as io from '@actions/io';
 
 import { Cargo, Cross, CrossOptions } from '../../src/core';
+import * as exec from '@actions/exec';
 
 const SECONDS = 1000;
 
@@ -14,10 +15,9 @@ describe('Cross', () => {
     it(
       'installs cross',
       async () => {
-        try {
-          await io.which('cross', true);
+        if (await io.which('cross')) {
           console.log('cross already installed; skipping this test');
-        } catch {
+        } else {
           // cross is not installed; install it
           const cross = await Cross.install(options);
           const exitCode = await cross.call(['--version']);
@@ -32,14 +32,12 @@ describe('Cross', () => {
     it(
       'fetches the installed cross',
       async () => {
-        try {
-          await io.which('cross', true);
-
+        if (await io.which('cross')) {
           // cross is installed, we can test it
           const cross = await Cross.get();
           const exitCode = await cross.call(['--version']);
           expect(exitCode).toBe(0);
-        } catch {
+        } else {
           console.log('cross not installed; skipping this test');
         }
       },
@@ -64,7 +62,11 @@ describe('Cross', () => {
         async () => {
           // This test assumes that nightly Rust is installed.
           const cargo = await Cargo.get('nightly');
-          if ((await cargo.call(['--version'])) === 0) {
+          const execOptions: exec.ExecOptions = {
+            ignoreReturnCode: true,
+            failOnStdErr: false,
+          };
+          if ((await cargo.call(['--version'], execOptions)) === 0) {
             const optionsWithToolchain: CrossOptions = {
               ...options,
               toolchain: 'nightly',
