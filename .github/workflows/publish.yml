@@ -24,5 +24,8 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
+      - run: npm ci
+      - name: Build package
+        run: npm run build
       - name: Publish to GitHub package registry
         run: npm publish
