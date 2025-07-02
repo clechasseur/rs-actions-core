@@ -17,8 +17,7 @@
     "format": "prettier --write 'src/**/*.ts' '__tests__/**/*.ts'",
     "lint": "tsc --noEmit && eslint 'src/**/*.ts' '__tests__/**/*.ts'",
     "refresh": "rm -rf ./dist/* && npm run build",
-    "test": "jest -c jest.config.json --runInBand",
-    "watch": "tsc -p . -w"
+    "test": "jest -c jest.config.json --runInBand"
   },
   "repository": {
     "type": "git",
