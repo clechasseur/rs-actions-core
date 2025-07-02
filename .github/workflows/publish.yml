@@ -17,6 +17,12 @@ jobs:
   # https://github.com/clechasseur/rs-actions-core/pkgs/npm/rs-actions-core
   publish:
     runs-on: ubuntu-24.04
+    permissions:
+      # https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#publishing-a-package-using-an-action
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     steps:
       - name: Create npm configuration
         run: echo "//npm.pkg.github.com/:_authToken=${token}" >> ~/.npmrc
