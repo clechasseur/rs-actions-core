@@ -27,7 +27,7 @@
     "url": "https://github.com/clechasseur/rs-actions-core/issues"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.19.4"
   },
   "dependencies": {
     "@actions/cache": "^4.0.3",
