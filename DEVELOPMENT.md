@@ -23,12 +23,12 @@ The project includes all required commands via `npm` scripts.
 | `npm` command     | Effect                                             |
 |-------------------|----------------------------------------------------|
 | `npm test`        | Run the tests                                      |
-| `npm run lint`    | Run `eslint` on the code                           |
+| `npm run lint`    | Run `oxlint` on the code                           |
 | `npm run format`  | Run `prettier` to format the code                  |
 | `npm run build`   | Build the package                                  |
 | `npm run refresh` | Rebuild the package, cleaning up `dist` beforehand |
-| `npm run all`     | Rebuild package, run `eslint` and run the tests    |
+| `npm run all`     | Rebuild package, run `oxlint` and run the tests    |
 
 ## Questions?
 
-If any part of this documentation is unclear, please open a [new issue](https://github.com/clechasseur/rust-template/issues/new/choose) so it can be fixed.
+If any part of this documentation is unclear, please open a [new issue](https://github.com/clechasseur/rs-actions-core/issues/new/choose) so it can be fixed.
