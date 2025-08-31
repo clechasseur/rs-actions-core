@@ -12,10 +12,9 @@ on:
         default: true
 
 jobs:
-  # Triggered when a tag is created to publish a new version to
-  # the GitHub package registry at:
+  # Publishes a new version to the GitHub package registry at:
   # https://github.com/clechasseur/rs-actions-core/pkgs/npm/rs-actions-core
-  publish:
+  publish-to-github:
     runs-on: ubuntu-24.04
     permissions:
       # https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#publishing-a-package-using-an-action
@@ -40,3 +39,29 @@ jobs:
         run: npm run build
       - name: Publish to GitHub package registry
         run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }}
+
+  # Publishes a new version to the NPM package registry at:
+  # https://npmjs.com/package/@clechasseur/rs-actions-core
+  publish-to-npm:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Remove GitHub package registry reference
+        run: rm .npmrc
+
+      - run: npm ci
+      - name: Build package
+        run: npm run build
+      - name: Publish to NPM package registry
+        run: npm publish --provenance --access public ${{ inputs.dry-run && '--dry-run' || '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
