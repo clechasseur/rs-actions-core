@@ -3,7 +3,7 @@ import * as io from '@actions/io';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
-import { Cargo, cargoToolchainArg } from './cargo';
+import { Cargo, cargoToolchainArg } from './cargo.js';
 
 /**
  * Possible arguments to {@link Cross.getOrInstall} and

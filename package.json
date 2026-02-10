@@ -1,5 +1,6 @@
 {
   "private": false,
+  "type": "module",
   "name": "@clechasseur/rs-actions-core",
   "version": "7.0.0",
   "author": "clechasseur",
@@ -17,7 +18,7 @@
     "format": "prettier --write 'src/**/*.ts' '__tests__/**/*.ts'",
     "lint": "oxlint",
     "refresh": "rm -rf ./dist/* && npm run build",
-    "test": "jest -c jest.config.json --runInBand"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
     "semver": "^7.7.4"
   },
   "devDependencies": {
+    "@tsconfig/node-lts": "^24.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.9",
     "@types/semver": "^7.7.1",

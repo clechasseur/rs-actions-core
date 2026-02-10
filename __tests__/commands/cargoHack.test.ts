@@ -1,7 +1,7 @@
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
-import { Cargo, CargoHack, CargoHackOptions } from '../../src/core';
+import { Cargo, CargoHack, CargoHackOptions } from '../../src/core.js';
 
 const SECONDS = 1000;
 
