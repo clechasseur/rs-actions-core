@@ -1,6 +1,6 @@
 import * as io from '@actions/io';
 
-import { Cargo, Cross, CrossOptions } from '../../src/core';
+import { Cargo, Cross, CrossOptions } from '../../src/core.js';
 import * as exec from '@actions/exec';
 
 const SECONDS = 1000;

@@ -1,5 +1,6 @@
 {
   "private": false,
+  "type": "module",
   "name": "@clechasseur/rs-actions-core",
   "version": "7.0.0",
   "author": "clechasseur",
@@ -17,7 +18,7 @@
     "format": "prettier --write 'src/**/*.ts' '__tests__/**/*.ts'",
     "lint": "oxlint",
     "refresh": "rm -rf ./dist/* && npm run build",
-    "test": "jest -c jest.config.json --runInBand"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
   },
   "repository": {
     "type": "git",
@@ -30,16 +31,17 @@
     "node": ">=24.0.0"
   },
   "dependencies": {
-    "@actions/cache": "^5.0.5",
-    "@actions/core": "^2.0.3",
-    "@actions/exec": "^2.0.0",
-    "@actions/github": "^7.0.0",
-    "@actions/http-client": "^3.0.2",
-    "@actions/io": "^2.0.0",
-    "@actions/tool-cache": "^3.0.1",
+    "@actions/cache": "^6.0.0",
+    "@actions/core": "^3.0.0",
+    "@actions/exec": "^3.0.0",
+    "@actions/github": "^9.0.0",
+    "@actions/http-client": "^4.0.0",
+    "@actions/io": "^3.0.2",
+    "@actions/tool-cache": "^4.0.0",
     "semver": "^7.7.4"
   },
   "devDependencies": {
+    "@tsconfig/node-lts": "^24.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.9",
     "@types/semver": "^7.7.1",

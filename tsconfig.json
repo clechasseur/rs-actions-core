@@ -1,31 +1,9 @@
 {
+  "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
-    "allowJs": false,
-    "checkJs": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "newLine": "LF",
-    "noEmitOnError": true,
-    "noErrorTruncation": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "outDir": "dist",
-    "pretty": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "suppressImplicitAnyIndexErrors": false,
-    "target": "es2023",
-    "declaration": true,
-    "sourceMap": true
+    "rootDirs": [
+      "src"
+    ],
   },
-  "include": [
-    "src/**/*.ts"
-  ]
 }
