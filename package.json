@@ -2,7 +2,7 @@
   "private": false,
   "type": "module",
   "name": "@clechasseur/rs-actions-core",
-  "version": "8.0.0",
+  "version": "7.0.0",
   "author": "clechasseur",
   "license": "MIT",
   "description": "Core functionality for the rs-* actions repos",
