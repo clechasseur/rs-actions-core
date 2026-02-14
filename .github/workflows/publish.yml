@@ -62,6 +62,4 @@ jobs:
       - name: Build package
         run: npm run build
       - name: Publish to NPM package registry
-        run: npm publish --provenance --access public ${{ inputs.dry-run && '--dry-run' || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }}
