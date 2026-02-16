@@ -1,9 +1,11 @@
 {
   "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDirs": [
-      "src"
-    ],
+    "declaration": true,
+    "declarationMap": false,
+    "outDir": "./dist",
+    "sourceMap": false
   },
+  "exclude": ["__tests__", "dist", "node_modules"],
+  "include": ["src"]
 }
