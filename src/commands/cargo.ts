@@ -86,6 +86,8 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
    *                   `no-cache`, caching is disabled.
    * @param restoreKeys Optional additional cache keys to use when looking for
    *                    a cached version of the program.
+   * @param locked If `true`, passes `--locked` to `cargo install` to use
+   *               exact dependency versions from `Cargo.lock`. Default is `true`.
    * @returns Path to installed program. Since program will be installed in
    *          the cargo bin directory which is on the `PATH`, this will be
    *          equal to `program` currently.
@@ -95,6 +97,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
     version?: string,
     primaryKey?: string,
     restoreKeys?: string[],
+    locked = true,
   ): Promise<string> {
     if (!version || version === 'latest') {
       version = (await resolveVersion(program)) ?? '';
@@ -119,7 +122,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
       }
     }
 
-    const installPath = await this.cargoInstall(program, version);
+    const installPath = await this.cargoInstall(program, version, locked);
 
     if (primaryKey !== 'no-cache') {
       try {
@@ -160,11 +163,15 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
   private async cargoInstall(
     program: string,
     version: string,
+    locked?: boolean,
   ): Promise<string> {
     const args = ['install'];
     if (version !== 'latest') {
       args.push('--version');
       args.push(version);
+    }
+    if (locked) {
+      args.push('--locked');
     }
     args.push(program);
 
