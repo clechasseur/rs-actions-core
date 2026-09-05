@@ -163,7 +163,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
   private async cargoInstall(
     program: string,
     version: string,
-    locked?: boolean,
+    locked: boolean,
   ): Promise<string> {
     const args = ['install'];
     if (version !== 'latest') {

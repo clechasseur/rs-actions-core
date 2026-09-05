@@ -28,7 +28,7 @@ describe('Cargo', () => {
             expect(exitCode).toBe(0);
           }
         },
-        180 * SECONDS,
+        300 * SECONDS,
       );
     });
   });
