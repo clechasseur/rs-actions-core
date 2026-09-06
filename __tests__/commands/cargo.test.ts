@@ -1,34 +1,53 @@
-import * as io from '@actions/io';
+import { promises as fs } from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
-import { Cargo } from '../../src/core.js';
+import { Cargo, CargoInstallOptions } from '../../src/core.js';
 
 const SECONDS = 1000;
 
 describe('Cargo', () => {
   const primaryKey = process.env.CI ? undefined : 'no-cache';
 
-  describe('install', () => {
-    describe('with locked', () => {
-      it(
-        'installs cargo-audit using the version pins from its own Cargo.lock',
-        async () => {
-          if (await io.which('cargo-audit')) {
-            console.log('cargo-audit already installed; skipping this test');
-          } else {
-            const cargo = await Cargo.get();
-            await cargo.install(
-              'cargo-audit',
-              undefined,
-              primaryKey,
-              undefined,
-              true,
-            );
+  let tmpHomeDir: fs.DisposableTempDir | undefined;
+  let tmpOptions: CargoInstallOptions | undefined;
 
-            const exitCode = await cargo.call(['audit', '--version']);
-            expect(exitCode).toBe(0);
-          }
+  beforeEach(async () => {
+    tmpHomeDir = await fs.mkdtempDisposable(path.join(os.tmpdir(), 'rs-actions-core-cargo-tests-'));
+    tmpOptions = {
+      home: tmpHomeDir.path,
+      primaryKey,
+    };
+  });
+
+  afterEach(async () => {
+    tmpOptions = undefined;
+    await tmpHomeDir?.remove();
+    tmpHomeDir = undefined;
+  });
+
+  describe('install', () => {
+    describe.each([
+      undefined,
+      { locked: undefined },
+      { locked: false },
+      { locked: true },
+      { version: '0.22.2' },
+    ])('with options = %o', (options?: CargoInstallOptions) => {
+      it(
+        'installs cargo-audit',
+        async () => {
+          const actualOptions: CargoInstallOptions = {
+            ...options,
+            ...tmpOptions,
+          };
+          const cargo = await Cargo.get(actualOptions);
+          await cargo.install('cargo-audit', actualOptions);
+
+          const exitCode = await cargo.call(['audit', '--version']);
+          expect(exitCode).toBe(0);
         },
-        300 * SECONDS,
+        360 * SECONDS,
       );
     });
   });

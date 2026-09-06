@@ -3,62 +3,35 @@ import * as io from '@actions/io';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
-import { Cargo, cargoToolchainArg } from './cargo.js';
+import {
+  Cargo,
+  CargoInstallOptions,
+  CargoOptions,
+} from './cargo.js';
 
 /**
- * Possible arguments to {@link Cross.getOrInstall} and
- * {@link Cross.install}.
+ * Wrapper for `cross`.
+ *
+ * Either fetch an existing installed version using {@link Cross.get}
+ * or install one as required using {@link Cross.getOrInstall}.
  */
-export interface CrossOptions {
-  /**
-   * Toolchain to use when calling `cross`.
-   *
-   * If `undefined`, the default toolchain will be used.
-   *
-   * Note that this toolchain is not used to _install_ `cross` itself,
-   * only to call it once subsequently installed.
-   */
-  toolchain?: string;
-
-  /**
-   * Version of `cross` to install.
-   *
-   * If `undefined` or set to `'latest'`, the latest version will be installed.
-   */
-  version?: string;
-
-  /**
-   * Primary cache key to use when caching the installed `cross`.
-   *
-   * If `undefined`, a default value will be used.
-   * If set to `'no-cache'`, caching will be disabled.
-   */
-  primaryKey?: string;
-
-  /**
-   * Optional additional restore keys to use when looking for an installed
-   * version of `cross`.
-   */
-  restoreKeys?: string[];
-}
-
 export class Cross {
-  private readonly path: string;
-  private readonly toolchain: string;
-
-  private constructor(path: string, toolchain?: string) {
-    this.path = path;
-    this.toolchain = cargoToolchainArg(toolchain);
-  }
+  private constructor(
+    private readonly path: string,
+    private readonly options?: CargoOptions,
+  ) {}
 
   /**
    * Gets the installed version of `cross`, or installs it if not yet installed.
    *
-   * @param options Options for getting or installing `cross`. See {@link CrossOptions}.
+   * @param options Options for calling `cross`, or for installing it if
+   *                necessary. See {@link CargoInstallOptions}.
    */
-  public static async getOrInstall(options?: CrossOptions): Promise<Cross> {
+  public static async getOrInstall(
+    options?: CargoInstallOptions,
+  ): Promise<Cross> {
     try {
-      return await Cross.get(options?.toolchain);
+      return await Cross.get(options);
     } catch (error) {
       core.debug((error as Error).message);
       return await Cross.install(options);
@@ -69,47 +42,38 @@ export class Cross {
    * Gets the installed version of `cross`.
    * Throws an exception if not installed.
    *
-   * @param toolchain Optional toolchain to use when invoking `cross`.
+   * @param options Options used when calling `cross`.
    */
-  public static async get(toolchain?: string): Promise<Cross> {
+  public static async get(options?: CargoOptions): Promise<Cross> {
     const path = await io.which('cross', true);
 
-    return new Cross(path, toolchain);
+    return new Cross(path, options);
   }
 
   /**
    * Install `cross` and caches it for future use.
    *
-   * @param options Options for getting or installing `cross`. See {@link CrossOptions}.
+   * @param options Options for calling and installing `cross`. See
+   *                {@link CargoInstallOptions}.
+   * @param cargoOptions Options used to fetch the {@link Cargo} wrapper
+   *                     (see {@link Cargo.get}). If not specified, `options`
+   *                     will be used for this as well.
    */
-  public static async install(options?: CrossOptions): Promise<Cross> {
-    const cargo = await Cargo.get();
-
-    // Compiling cross might require a version of Rust that the
-    // one currently installed and configured, so move to the
-    // temp directory (to get the system version of Rust).
-
-    const cwd = process.cwd();
-    process.chdir(os.tmpdir());
-
-    try {
-      const crossPath = await cargo.install(
-        'cross',
-        options?.version,
-        options?.primaryKey,
-        options?.restoreKeys,
-      );
-
-      return new Cross(crossPath, options?.toolchain);
-    } finally {
-      // It is important to chdir back!
-      process.chdir(cwd);
-      core.endGroup();
-    }
+  public static async install(
+    options?: CargoInstallOptions,
+    cargoOptions?: CargoOptions,
+  ): Promise<Cross> {
+    const cargo = await Cargo.get(cargoOptions ?? options);
+    const crossPath = await cargo.install('cross', options);
+    return new Cross(crossPath, options);
   }
 
   /**
-   * Runs a cross command.
+   * Runs a `cross` command.
+   *
+   * @param args Arguments to pass to `cross`.
+   * @param options Optional exec options.
+   * @returns `cross` exit code.
    */
   public async call(
     args: string[],
@@ -119,6 +83,6 @@ export class Cross {
   }
 
   private callArgs(args: string[]): string[] {
-    return this.toolchain ? [this.toolchain, ...args] : args;
+    return this.options?.toolchain ? [this.options.toolchain, ...args] : args;
   }
 }
