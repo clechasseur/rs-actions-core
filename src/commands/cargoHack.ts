@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import * as io from '@actions/io';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
@@ -38,8 +40,11 @@ export class CargoHack {
    * @param options Options used when calling `cargo-hack`.
    */
   public static async get(options?: CargoOptions): Promise<CargoHack> {
-    // io.which will throw an exception if not installed, but we don't need the path proper.
-    await io.which('cargo-hack', true);
+    // io.which will throw an exception if not installed.
+    const whichPath = options?.home
+      ? path.join(options.home, 'bin', 'cargo-hack')
+      : 'cargo-hack';
+    await io.which(whichPath, true);
 
     return new CargoHack(options);
   }

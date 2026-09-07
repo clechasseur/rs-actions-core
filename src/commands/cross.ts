@@ -1,8 +1,13 @@
+import * as path from 'path';
+
 import * as io from '@actions/io';
 import * as core from '@actions/core';
-import * as exec from '@actions/exec';
 
-import { Cargo, CargoInstallOptions, CargoOptions } from './cargo.js';
+import {
+  Cargo,
+  CargoInstallOptions,
+  CargoOptions,
+} from './cargo.js';
 
 /**
  * Wrapper for `cross`.
@@ -10,11 +15,10 @@ import { Cargo, CargoInstallOptions, CargoOptions } from './cargo.js';
  * Either fetch an existing installed version using {@link Cross.get}
  * or install one as required using {@link Cross.getOrInstall}.
  */
-export class Cross {
-  private constructor(
-    private readonly path: string,
-    private readonly options?: CargoOptions,
-  ) {}
+export class Cross extends Cargo {
+  protected constructor(path: string, options?: CargoOptions) {
+    super(path, options);
+  }
 
   /**
    * Gets the installed version of `cross`, or installs it if not yet installed.
@@ -40,9 +44,12 @@ export class Cross {
    * @param options Options used when calling `cross`.
    */
   public static async get(options?: CargoOptions): Promise<Cross> {
-    const path = await io.which('cross', true);
+    const whichPath = options?.home
+      ? path.join(options.home, 'bin', 'cross')
+      : 'cross';
+    const crossPath = await io.which(whichPath, true);
 
-    return new Cross(path, options);
+    return new Cross(crossPath, options);
   }
 
   /**
@@ -61,23 +68,5 @@ export class Cross {
     const cargo = await Cargo.get(cargoOptions ?? options);
     const crossPath = await cargo.install('cross', options);
     return new Cross(crossPath, options);
-  }
-
-  /**
-   * Runs a `cross` command.
-   *
-   * @param args Arguments to pass to `cross`.
-   * @param options Optional exec options.
-   * @returns `cross` exit code.
-   */
-  public async call(
-    args: string[],
-    options?: exec.ExecOptions,
-  ): Promise<number> {
-    return await exec.exec(this.path, this.callArgs(args), options);
-  }
-
-  private callArgs(args: string[]): string[] {
-    return this.options?.toolchain ? [this.options.toolchain, ...args] : args;
   }
 }

@@ -62,11 +62,11 @@ export interface CargoInstallOptions extends CargoOptions {
  * To obtain the currently installed `cargo`, call {@link Cargo.get}.
  */
 export class Cargo {
-  private readonly path: string;
-  private readonly options: CargoOptions;
-  private readonly cargoEnv: { [key: string]: string };
+  protected readonly path: string;
+  protected readonly options: CargoOptions;
+  protected readonly cargoEnv: { [key: string]: string };
 
-  private constructor(path: string, options?: CargoOptions) {
+  protected constructor(path: string, options?: CargoOptions) {
     this.path = path;
     this.options = {
       ...options,
@@ -130,7 +130,14 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
       installOptions.version = (await resolveVersion(program)) ?? '';
     }
 
-    const paths = [path.join(path.dirname(this.path), program)];
+    const paths = [
+      path.join(
+        ...(this.options.home
+          ? [this.options.home, 'bin']
+          : [path.dirname(this.path)]),
+        program,
+      ),
+    ];
     const programKey = `${program}-${installOptions.version}-${installOptions.primaryKey}`;
     const programRestoreKeys = (installOptions.restoreKeys ?? []).map(
       (key) => `${program}-${installOptions.version}-${key}`,
@@ -206,7 +213,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
     return await exec.exec(this.path, this.callArgs(args), execOptions);
   }
 
-  private callArgs(args: string[]): string[] {
+  protected callArgs(args: string[]): string[] {
     return this.options.toolchain ? [this.options.toolchain, ...args] : args;
   }
 
@@ -232,6 +239,9 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
       core.endGroup();
     }
 
+    if (this.options.home) {
+      return path.join(this.options.home, 'bin', program);
+    }
     return program;
   }
 }
