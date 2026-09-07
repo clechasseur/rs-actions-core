@@ -118,7 +118,10 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
    *          equal to `program` currently (unless Cargo's
    *          {@link CargoOptions.home home} is customized).
    */
-  public async install(program: string, options?: CargoInstallOptions): Promise<string> {
+  public async install(
+    program: string,
+    options?: CargoInstallOptions,
+  ): Promise<string> {
     const installOptions: CargoInstallOptions = {
       ...options,
       primaryKey: options?.primaryKey ?? 'rs-actions-core',

@@ -1,13 +1,8 @@
-import * as os from 'os';
 import * as io from '@actions/io';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
-import {
-  Cargo,
-  CargoInstallOptions,
-  CargoOptions,
-} from './cargo.js';
+import { Cargo, CargoInstallOptions, CargoOptions } from './cargo.js';
 
 /**
  * Wrapper for `cargo-hack`, called via `cargo`.
@@ -16,8 +11,7 @@ import {
  * or install one as required using {@link CargoHack.getOrInstall}.
  */
 export class CargoHack {
-  private constructor(private readonly options?: CargoOptions) {
-  }
+  private constructor(private readonly options?: CargoOptions) {}
 
   /**
    * Gets the installed version of `cargo-hack`, or installs it if not yet

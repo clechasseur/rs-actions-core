@@ -1,13 +1,8 @@
-import * as os from 'os';
 import * as io from '@actions/io';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 
-import {
-  Cargo,
-  CargoInstallOptions,
-  CargoOptions,
-} from './cargo.js';
+import { Cargo, CargoInstallOptions, CargoOptions } from './cargo.js';
 
 /**
  * Wrapper for `cross`.

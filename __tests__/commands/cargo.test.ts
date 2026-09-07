@@ -13,7 +13,9 @@ describe('Cargo', () => {
   let tmpOptions: CargoInstallOptions | undefined;
 
   beforeEach(async () => {
-    tmpHomeDir = await fs.mkdtempDisposable(path.join(os.tmpdir(), 'rs-actions-core-cargo-tests-'));
+    tmpHomeDir = await fs.mkdtempDisposable(
+      path.join(os.tmpdir(), 'rs-actions-core-cargo-tests-'),
+    );
     tmpOptions = {
       home: tmpHomeDir.path,
       primaryKey,
