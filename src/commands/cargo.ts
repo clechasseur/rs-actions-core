@@ -62,26 +62,13 @@ export interface CargoInstallOptions extends CargoOptions {
  * To obtain the currently installed `cargo`, call {@link Cargo.get}.
  */
 export class Cargo {
-  protected readonly path: string;
-  protected readonly options: CargoOptions;
   protected readonly cargoEnv: { [key: string]: string };
 
-  protected constructor(path: string, options?: CargoOptions) {
-    this.path = path;
-    this.options = {
-      ...options,
-      toolchain: cargoToolchainArg(options?.toolchain),
-    };
-    this.cargoEnv = {};
-
-    for (const [key, value] of Object.entries(process.env)) {
-      if (value !== undefined) {
-        this.cargoEnv[key] = value;
-      }
-    }
-    if (this.options.home !== undefined) {
-      this.cargoEnv['CARGO_HOME'] = this.options.home;
-    }
+  protected constructor(
+    protected readonly path: string,
+    protected readonly options?: CargoOptions,
+  ) {
+    this.cargoEnv = getCargoEnv(options);
   }
 
   /**
@@ -132,7 +119,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
 
     const paths = [
       path.join(
-        ...(this.options.home
+        ...(this.options?.home
           ? [this.options.home, 'bin']
           : [path.dirname(this.path)]),
         program,
@@ -158,7 +145,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
 
       if (cacheKey) {
         core.info(
-          `Using cached \`${program}\` with version \`${installOptions.version}\``,
+          `Using cached "${program}" with version "${installOptions.version}"`,
         );
         return program;
       }
@@ -203,6 +190,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
     args: string[],
     options?: exec.ExecOptions,
   ): Promise<number> {
+    const callArgs = cargoCallArgs(args, this.options);
     const execOptions: exec.ExecOptions = {
       ...options,
       env: {
@@ -210,11 +198,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
         ...options?.env,
       },
     };
-    return await exec.exec(this.path, this.callArgs(args), execOptions);
-  }
-
-  protected callArgs(args: string[]): string[] {
-    return this.options.toolchain ? [this.options.toolchain, ...args] : args;
+    return await exec.exec(this.path, callArgs, execOptions);
   }
 
   private async cargoInstall(
@@ -239,7 +223,7 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
       core.endGroup();
     }
 
-    if (this.options.home) {
+    if (this.options?.home) {
       return path.join(this.options.home, 'bin', program);
     }
     return program;
@@ -247,18 +231,23 @@ see https://help.github.com/en/articles/software-in-virtual-environments-for-git
 }
 
 /**
- * Computes the argument to pass to cargo to specify a toolchain.
+ * Computes the arguments to pass when calling `cargo` for the given options.
+ * Takes care of checking if options override the toolchain, etc.
  *
- * @param toolchain Toolchain to use, or `undefined` to use the default toolchain.
- * @returns Cargo toolchain argument. Either an empty string if the default
- *          toolchain must be used, or a toolchain identifier prepended with `+`.
+ * @param args Arguments to pass to `cargo`.
+ * @param options Options to use when calling `cargo`.
+ * @returns Actual list of parameters to pass to `cargo`, including extra
+ *          parameters like the toolchain, etc.
  */
-export function cargoToolchainArg(toolchain?: string): string {
-  if (!toolchain) {
-    return '';
-  }
+export function cargoCallArgs(
+  args: string[],
+  options?: CargoOptions,
+): string[] {
+  const toolchainArg = options?.toolchain
+    ? [`${options.toolchain.startsWith('+') ? '' : '+'}${options.toolchain}`]
+    : [];
 
-  return toolchain.startsWith('+') ? toolchain : `+${toolchain}`;
+  return [...toolchainArg, ...args];
 }
 
 /**
@@ -273,12 +262,41 @@ export async function resolveVersion(crate: string): Promise<string> {
     '@clechasseur/rs-actions-core (https://github.com/clechasseur/rs-actions-core)',
   );
 
-  const resp: any = await client.getJson(url); // eslint-disable-line @typescript-eslint/no-explicit-any
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const resp = await client.getJson<CreateResponse>(url);
   if (!resp.result) {
-    throw new Error('Unable to fetch latest crate version');
+    throw new Error(`Unable to fetch latest crate version for "${crate}"`);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
   return resp.result.crate.newest_version;
+}
+
+/**
+ * Returns a dictionary of environment variables that can be passed to `cargo`
+ * via {@link exec.ExecOptions.env}. The environment variables will be a copy
+ * of this process' environment, adjusted according to the given options.
+ *
+ * @param options Options to use to modify the `cargo` environment.
+ * @returns Dictionary of `cargo` environment variables.
+ */
+export function getCargoEnv(options?: CargoOptions): { [key: string]: string } {
+  const cargoEnv: { [key: string]: string } = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (value !== undefined) {
+      cargoEnv[key] = value;
+    }
+  }
+
+  if (options?.home !== undefined) {
+    cargoEnv['CARGO_HOME'] = options.home;
+  }
+
+  return cargoEnv;
+}
+
+interface Crate {
+  newest_version: string;
+}
+
+interface CreateResponse {
+  crate: Crate;
 }
