@@ -52,32 +52,35 @@ describe('CargoLike', () => {
       ['cargo-hack', { locked: true }],
       ['cargo-hack', { version: '0.6.45' }],
       ['cross', undefined],
-    ])('%s with options = %o', (name: string, options?: CargoInstallOptions) => {
-      afterEach(async () => {
-        const options: CargoOptions = { ...tmpOptions };
-        const cargo = await Cargo.get(options);
-        await cargo.call(['uninstall', name]);
-      });
+    ])(
+      '%s with options = %o',
+      (name: string, options?: CargoInstallOptions) => {
+        afterEach(async () => {
+          const options: CargoOptions = { ...tmpOptions };
+          const cargo = await Cargo.get(options);
+          await cargo.call(['uninstall', name]);
+        });
 
-      it(
-        `installs ${name} if needed, otherwise reuses it`,
-        async () => {
-          const actualOptions: CargoInstallOptions = {
-            ...options,
-            ...tmpOptions,
-          };
+        it(
+          `installs ${name} if needed, otherwise reuses it`,
+          async () => {
+            const actualOptions: CargoInstallOptions = {
+              ...options,
+              ...tmpOptions,
+            };
 
-          const tool = await CargoLike.getOrInstall(name, actualOptions);
-          const exitCode = await tool.call(['--version']);
-          expect(exitCode).toBe(0);
+            const tool = await CargoLike.getOrInstall(name, actualOptions);
+            const exitCode = await tool.call(['--version']);
+            expect(exitCode).toBe(0);
 
-          const alsoTool = await CargoLike.getOrInstall(name, actualOptions);
-          const alsoExitCode = await alsoTool.call(['--version']);
-          expect(alsoExitCode).toBe(0);
-        },
-        360 * SECONDS,
-      );
-    });
+            const alsoTool = await CargoLike.getOrInstall(name, actualOptions);
+            const alsoExitCode = await alsoTool.call(['--version']);
+            expect(alsoExitCode).toBe(0);
+          },
+          360 * SECONDS,
+        );
+      },
+    );
 
     describe('with toolchain', () => {
       it(
