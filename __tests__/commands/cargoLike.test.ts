@@ -19,7 +19,7 @@ describe('CargoLike', () => {
   let tmpHomeDir: fs.DisposableTempDir | undefined;
   let tmpOptions: CargoInstallOptions | undefined;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     tmpHomeDir = await fs.mkdtempDisposable(
       path.join(os.tmpdir(), 'rs-actions-core-cargo-like-tests-'),
     );
@@ -29,7 +29,7 @@ describe('CargoLike', () => {
     };
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     tmpOptions = undefined;
     await tmpHomeDir?.remove();
     tmpHomeDir = undefined;
@@ -53,6 +53,12 @@ describe('CargoLike', () => {
       ['cargo-hack', { version: '0.6.45' }],
       ['cross', undefined],
     ])('%s with options = %o', (name: string, options?: CargoInstallOptions) => {
+      afterEach(async () => {
+        const options: CargoOptions = { ...tmpOptions };
+        const cargo = await Cargo.get(options);
+        await cargo.call(['uninstall', name]);
+      });
+
       it(
         `installs ${name} if needed, otherwise reuses it`,
         async () => {
