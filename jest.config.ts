@@ -6,9 +6,12 @@
 import type { Config } from 'jest';
 import { createDefaultEsmPreset } from 'ts-jest';
 
-const defaultEsmPreset = createDefaultEsmPreset();
 const config: Config = {
-  ...defaultEsmPreset,
+  ...createDefaultEsmPreset({
+    diagnostics: {
+      ignoreCodes: [151002],
+    },
+  }),
 
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -134,10 +137,7 @@ const config: Config = {
   // rootDir: undefined,
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: [
-    "src",
-    "__tests__"
-  ],
+  roots: ['src', '__tests__'],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",

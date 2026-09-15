@@ -1,6 +1,6 @@
 {
   "name": "@clechasseur/rs-actions-core",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "author": "clechasseur",
   "license": "MIT",
   "description": "Core functionality for the rs-* actions repos",
