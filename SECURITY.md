@@ -2,16 +2,18 @@
 
 ## Supported Versions
 
-| Version | Supported |
-|---------|-----------|
-| 8.x.y   | ✅         |
-| 7.x.y   | ❌         |
-| 6.x.y   | ❌         |
-| 5.x.y   | ❌         |
-| 4.x.y   | ❌         |
-| 3.x.y   | ❌         |
-| 2.x.y   | ❌         |
-| 1.x.y   | ❌         |
+| Version  | Supported |
+|----------|-----------|
+| 10.x.y   | ✅         |
+|  9.x.y   | ✅         |
+|  8.x.y   | ❌         |
+|  7.x.y   | ❌         |
+|  6.x.y   | ❌         |
+|  5.x.y   | ❌         |
+|  4.x.y   | ❌         |
+|  3.x.y   | ❌         |
+|  2.x.y   | ❌         |
+|  1.x.y   | ❌         |
 
 ## Reporting a Vulnerability
 
