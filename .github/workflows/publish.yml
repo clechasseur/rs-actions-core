@@ -15,7 +15,7 @@ jobs:
   # Publishes a new version to the GitHub package registry at:
   # https://github.com/clechasseur/rs-actions-core/pkgs/npm/rs-actions-core
   publish-to-github:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       # https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#publishing-a-package-using-an-action
       contents: read
@@ -43,7 +43,7 @@ jobs:
   # Publishes a new version to the NPM package registry at:
   # https://npmjs.com/package/@clechasseur/rs-actions-core
   publish-to-npm:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
