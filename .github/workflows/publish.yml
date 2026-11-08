@@ -42,7 +42,7 @@ jobs:
       - name: Build package
         run: npm run build
       - name: Publish to GitHub package registry
-        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }} ${{ inputs.npm-tag != '' && format('--tag {0}', inputs.npm-tag) || '' }}
+        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }} --tag ${{ inputs.npm-tag || 'v10.x' }}
 
   # Publishes a new version to the NPM package registry at:
   # https://npmjs.com/package/@clechasseur/rs-actions-core
@@ -66,4 +66,4 @@ jobs:
       - name: Build package
         run: npm run build
       - name: Publish to NPM package registry
-        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }} ${{ inputs.npm-tag != '' && format('--tag {0}', inputs.npm-tag) || '' }}
+        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }} --tag ${{ inputs.npm-tag || 'v10.x' }}
