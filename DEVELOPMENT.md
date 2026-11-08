@@ -2,9 +2,9 @@ This guide is meant for people wishing to contribute to this open-source project
 
 ## Prerequisites
 
-### Node.js v24
+### Node.js v26
 
-Since this is library for JavaScript GitHub actions, you will need Node.js v24.x.
+Since this is library for JavaScript GitHub actions, you will need Node.js v26.x.
 If you do not have it installed, you can install it in [a variety of ways](https://nodejs.org/en/download).
 
 ## Development
