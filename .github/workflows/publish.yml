@@ -10,6 +10,10 @@ on:
         type: boolean
         description: Perform a dry-run
         default: true
+      npm-tag:
+        type: string
+        description: Optional tag to use for npm publish
+        default: ""
 
 jobs:
   # Publishes a new version to the GitHub package registry at:
@@ -38,7 +42,7 @@ jobs:
       - name: Build package
         run: npm run build
       - name: Publish to GitHub package registry
-        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }}
+        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }} --tag ${{ inputs.npm-tag || 'release/v9.x' }}
 
   # Publishes a new version to the NPM package registry at:
   # https://npmjs.com/package/@clechasseur/rs-actions-core
@@ -62,4 +66,4 @@ jobs:
       - name: Build package
         run: npm run build
       - name: Publish to NPM package registry
-        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }}
+        run: npm publish ${{ inputs.dry-run && '--dry-run' || '' }} --tag ${{ inputs.npm-tag || 'release/v9.x' }}
